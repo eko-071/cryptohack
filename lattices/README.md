@@ -126,15 +126,35 @@ $$
 
 Here, both the **Shortest Vector Problem(SVP)** and the **Closest Vector Problem(CVP)** were introduced.
 
-**Shortest Vector Problem(SVP)**: 
+**Shortest Vector Problem(SVP)**: find the shortest non-zero vector in a lattice $L$. In other words, find the non-zero vector within $v ∈ L$ such that $||v||$ is minimised.
 
-**Closest Vector Problem(CVP)**:
+**Closest Vector Problem(CVP)**: Given a vector $w ∈ R^m$ that is not in $L$, find the vector $v ∈ L$ that is the closest to $w$, i.e. find the vector $v ∈ L$ such that $||v−w||$ is minimised.
 
 Gaussian Lattice Reduction was developed to find an optimal basis for a two-dimensional lattice given an arbitrary basis, in which the output $v_{1}$ is a shortest non-zero vector in $L$ and thus solves the SVP.
 
 ### Given
 
+$$
+\begin{split}
+v &= (846835985,9834798552)\\
+u &= (87502093,123094980)\\
+\end{split}
+$$
 
+### Solving
+
+This was somewhat similar to Euclid's algorithm, since we swap to ensure the one with smaller size stays as $v_{1}$.
+
+The optimal basis obtained is:
+
+$$
+\begin{split}
+v_{1} &= (87502093,123094980)\\
+v_{2} &= (-4053281223, 2941479672)\\
+\end{split}
+$$
+
+The dot product, $v_{1} \cdot v_{2} = 7410790865146821$
 
 ## Find The Lattice
 
@@ -169,18 +189,28 @@ Here, `(q, h)` is the public key generated, `(f, g)` the private key, `e` the en
 
 ### Solving
 
-$$
-\begin{split}
-e &= r \cdot h + m \mod q \\
-  &= r \cdot f^{-1} \cdot g + m \mod q
-\end{split}
-$$
+What we need to find is the private key, $(f,g)$.
+Once we get that, we can easily decrypt the flag with the given procedure.
+
+We need to find some sort of way to turn this into a lattice problem. 
 
 $$
 \begin{split}
-a &= f \cdot e \mod q \\
-  &= f \cdot (r \cdot f^{-1} \cdot g + m) \mod q \\
-  &= rg + fm \mod q
+h &= f^{-1} \cdot g \mod q\\
+\iff g &= f \cdot h \mod q\\
+\iff g &= f \cdot h + k \cdot q\\
+\iff (g,f) &= (fh + kq,f)\\
+\iff (g,f) &= f(h,1) + k(q,0)\\
 \end{split}
 $$
 
+where $k$ is some integer.
+
+This shows that $(g,f)$ is a linear combination of the vectors $(h,1)$ and $(q,0)$.
+
+Let's consider the lattice constructed by the basis, $B = ((q,0),(h,1))$.
+The vector $(g,f)$ lies in this lattice.
+Since both $f$ and $g$ are bounded by $\sqrt{q/2}$, the vector has norm $= \sqrt{f^2 + g^2} \approx \sqrt{q}$.
+This is quite smaller than the other basis vectors, which have norms on the order of $q$.
+
+So here, we could use Gaussian Reduction to get the optimal basis, from which we'll get the SVP, which gives us the private key.

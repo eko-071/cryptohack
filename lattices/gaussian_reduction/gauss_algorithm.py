@@ -16,14 +16,6 @@ def vector_subtract(u, v):
 def get_minor_matrix(matrix, i, j):
     return [row[:j] + row[j+1:] for row in matrix[:i]+matrix[i+1:]]
 
-def determinant(matrix):
-    if len(matrix) == 2:
-        return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0]
-    result = 0
-    for c in range(len(matrix)):
-        result += pow(-1, c)*matrix[0][c]*determinant(get_minor_matrix(matrix, 0, c))
-    return result
-
 def gauss_algorithm(u, v):
     if dot_product(v, v) < dot_product(u, u):
         return gauss_algorithm(v, u)
@@ -37,4 +29,5 @@ v=(846835985,9834798552)
 u=(87502093,123094980)
 
 b1, b2 = gauss_algorithm(v, u)
+print(b1, b2)
 print(dot_product(b1, b2))
