@@ -164,7 +164,7 @@ The dot product, $v_{1} \cdot v_{2} = 7410790865146821$
 
 - $q$ is some 512-bit prime number
 - $2<f<\sqrt{\frac{q}{2}}$
-- $\sqrt{\frac{q}{4}}<f<\sqrt{\frac{q}{2}}$ and $gcd(f,g)=1$
+- $\sqrt{\frac{q}{4}}<g<\sqrt{\frac{q}{2}}$ and $gcd(f,g)=1$
 - $h = f^{-1} \cdot g \mod q$ 
 - Now `gen_key()` returns `(q, h), (f, g)`
 
