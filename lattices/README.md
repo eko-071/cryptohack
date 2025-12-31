@@ -214,3 +214,47 @@ Since both $f$ and $g$ are bounded by $\sqrt{q/2}$, the vector has norm $= \sqrt
 This is quite smaller than the other basis vectors, which have norms on the order of $q$.
 
 So here, we could use Gaussian Reduction to get the optimal basis, from which we'll get the SVP, which gives us the private key.
+
+## Backpack Cryptography
+
+I originally had no clue what to make of the source code, but when I searched up "Backpack Cryptography" on the internet, the first thing that popped up was the Merkle-Hellman knapsack cryptosystem.
+There were also multiple sources for the lattice reduction attack on this system, so I was thankfully able to understand the concept behind this.
+
+Merkle-Hellman is a public key cryptosystem based on the subset sum problem.
+The problem is as follows: given a set of integers $A$ and an integer $c$, find a subset of $A$ that sums to $c$.
+
+### Given
+
+#### Key Generation
+
+##### Private Key
+
+First, we have an initial value of $s=10000$.
+We generate a superincreasing sequence `b[]` with `size` number of elements.
+Each $b[i]$ is randomly chosen from $(s+1, 2s)$, with the superincreasing property($b[i] > sum(b[0:i])$).
+We keep updating $s$ to $s += b[i]$ in this loop.
+
+We then randomly choose a prime `q` from $(2s, 32s)$ and a random integer `r` from $(s,q)$.
+
+Then we return the private key, which is `(b, r, q)`.
+
+##### Public Key
+
+The public key is based on the private key `b[ ]`.
+
+It is `a[]` where $a[i] = r \cdot b[i] \mod q$.
+
+#### Encryption
+
+Initialise ciphertext to 0.
+We convert the message `m` to binary and then, for each bit `a[i]` in the private key, we add `a[i]*m[i]` to ciphertext.
+We then return the final sum.
+
+#### Decryption
+
+We first compute $ct' = r^{-1} \cdot ct \mod q$.
+Initialise message to 0.
+Now we start from the end of the private key `b[]`, that is, the largest element.
+If $ct' >= b[i]$, we set the $i^{th}$ bit of the message to 1 and subtract $b[i]$ from $ct'$.
+
+### Solving
